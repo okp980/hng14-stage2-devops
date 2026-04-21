@@ -1,31 +1,36 @@
-const express = require('express');
-const axios = require('axios');
-const path = require('path');
-const app = express();
+const express = require("express")
+const axios = require("axios")
+const path = require("path")
+const app = express()
 
-const API_URL = "http://localhost:8000";
+const API_URL = process.env.API_URL
+const PORT = process.env.PORT
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'views')));
+app.use(express.json())
+app.use(express.static(path.join(__dirname, "views")))
 
-app.post('/submit', async (req, res) => {
+app.post("/submit", async (req, res) => {
   try {
-    const response = await axios.post(`${API_URL}/jobs`);
-    res.json(response.data);
+    const response = await axios.post(`${API_URL}/jobs`)
+    res.json(response.data)
   } catch (err) {
-    res.status(500).json({ error: "something went wrong" });
+    res.status(500).json({ error: "something went wrong" })
   }
-});
+})
 
-app.get('/status/:id', async (req, res) => {
+app.get("/status/:id", async (req, res) => {
   try {
-    const response = await axios.get(`${API_URL}/jobs/${req.params.id}`);
-    res.json(response.data);
+    const response = await axios.get(`${API_URL}/jobs/${req.params.id}`)
+    res.json(response.data)
   } catch (err) {
-    res.status(500).json({ error: "something went wrong" });
+    res.status(500).json({ error: "something went wrong" })
   }
-});
+})
 
-app.listen(3000, () => {
-  console.log('Frontend running on port 3000');
-});
+app.get("/health", async (req, res) => {
+  res.json({ status: "ok" })
+})
+
+app.listen(PORT, () => {
+  console.log(`Frontend running on port ${PORT}`)
+})
