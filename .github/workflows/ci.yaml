@@ -34,3 +34,15 @@ jobs:
       - name: Lint Frontend with ESLint
         working-directory: ./frontend
         run: npx eslint .
+      - name: Lint API Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./api/Dockerfile
+      - name: Lint Frontend Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./frontend/Dockerfile
+      - name: Lint Worker Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./worker/Dockerfile
