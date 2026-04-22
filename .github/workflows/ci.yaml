@@ -19,6 +19,18 @@ jobs:
       - name: Install Flake8
         run: pip install flake8
       - name: Lint API with Flake8
-        run: flake8 ./api
+        working-directory: ./api
+        run: flake8 .
       - name: Lint Worker with Flake8
-        run: flake8 ./worker
+        working-directory: ./worker
+        run: flake8 .
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install ESLint
+        working-directory: ./frontend
+        run: npm install eslint
+      - name: Lint Frontend with ESLint
+        working-directory: ./frontend
+        run: eslint . --ext .js
