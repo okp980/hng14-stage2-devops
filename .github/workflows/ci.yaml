@@ -24,7 +24,13 @@ jobs:
       - name: Lint Worker with Flake8
         working-directory: ./worker
         run: flake8 .
-      - name: ESLint
-        uses: stefanoeb/eslint-action@1.0.2
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          files: frontend/
+          node-version: "20"
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm ci
+      - name: Lint Frontend with ESLint
+        working-directory: ./frontend
+        run: npx eslint .
