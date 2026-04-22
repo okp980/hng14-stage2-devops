@@ -27,4 +27,4 @@ jobs:
       - name: ESLint
         uses: stefanoeb/eslint-action@1.0.2
         with:
-          files: "frontend/**/*.js"
+          files: frontend/
