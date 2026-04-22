@@ -11,8 +11,5 @@ export default [
       },
       sourceType: "commonjs",
     },
-    rules: {
-      "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-    },
   },
 ]
