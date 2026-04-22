@@ -30,7 +30,7 @@ jobs:
           node-version: "24"
       - name: Install ESLint
         working-directory: ./frontend
-        run: npm install eslint
+        run: npm install -g eslint
       - name: Lint Frontend with ESLint
         working-directory: ./frontend
         run: eslint . --ext .js
