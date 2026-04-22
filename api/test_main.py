@@ -1,4 +1,4 @@
-from .main import app
+import api.main as main
 from fastapi.testclient import TestClient
 
 
@@ -19,7 +19,7 @@ class FakeRedis:
 
 
 def test_health_returns_ok():
-    client = TestClient(app)
+    client = TestClient(main.app)
     res = client.get("/health")
     assert res.status_code == 200
     assert res.json() == {"status": "ok"}
@@ -27,9 +27,9 @@ def test_health_returns_ok():
 
 def test_create_job_pushes_to_queue_and_sets_status(monkeypatch):
     fake = FakeRedis()
-    monkeypatch.setattr(app, "r", fake)
+    monkeypatch.setattr(main, "r", fake)
 
-    client = TestClient(app)
+    client = TestClient(main.app)
     res = client.post("/jobs")
 
     assert res.status_code == 200
@@ -43,9 +43,9 @@ def test_create_job_pushes_to_queue_and_sets_status(monkeypatch):
 
 def test_get_job_returns_not_found_when_missing(monkeypatch):
     fake = FakeRedis()
-    monkeypatch.setattr(app, "r", fake)
+    monkeypatch.setattr(main, "r", fake)
 
-    client = TestClient(app)
+    client = TestClient(main.app)
     res = client.get("/jobs/does-not-exist")
 
     assert res.status_code == 200
@@ -55,9 +55,9 @@ def test_get_job_returns_not_found_when_missing(monkeypatch):
 def test_get_job_returns_decoded_status(monkeypatch):
     fake = FakeRedis()
     fake.hget_map[("job:abc", "status")] = b"queued"
-    monkeypatch.setattr(app, "r", fake)
+    monkeypatch.setattr(main, "r", fake)
 
-    client = TestClient(app)
+    client = TestClient(main.app)
     res = client.get("/jobs/abc")
 
     assert res.status_code == 200
