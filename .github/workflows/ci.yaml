@@ -30,7 +30,7 @@ jobs:
           node-version: "20"
       - name: Install Dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: npm install
       - name: Lint Frontend with ESLint
         working-directory: ./frontend
         run: npx eslint .
