@@ -1,14 +1,12 @@
 
 ARG NODE_VERSION=24.14.1
 
-FROM node:${NODE_VERSION}-alpine as base
+FROM node:${NODE_VERSION}-alpine as builder
 
 # Use production node environment by default.
 ENV NODE_ENV production
 
 WORKDIR /app
-
-FROM base as builder
 
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev

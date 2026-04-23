@@ -1,3 +1,4 @@
+# Base stage
 ARG PYTHON_VERSION=3.13.2
 
 FROM python:${PYTHON_VERSION}-slim as base
@@ -7,17 +8,18 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+# Builder stage
+
 FROM base as builder
 
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-WORKDIR /app
+# Final stage
+FROM base as final
+
 ARG UID=10001
 RUN adduser \
     --disabled-password \
