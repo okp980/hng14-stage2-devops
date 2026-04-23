@@ -28,9 +28,9 @@ RUN adduser \
 
 WORKDIR /app
 
-COPY --from=builder /node_modules /node_modules
-COPY --from=builder /package.json /package.json
-COPY --from=builder /package-lock.json /package-lock.json
+COPY --from=builder /app/node_modules /node_modules
+COPY --from=builder /app/package.json /package.json
+COPY --from=builder /app/package-lock.json /package-lock.json
     
 # Copy application code
 COPY ./app.js .
