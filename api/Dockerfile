@@ -1,10 +1,8 @@
 ARG PYTHON_VERSION=3.13.2
 
 FROM python:${PYTHON_VERSION}-slim as base
-# Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
-# Keeps Python from buffering stdout and stderr to avoid situations where
-# the application crashes without emitting any logs due to buffering.
+
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
@@ -15,9 +13,11 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-FROM base as final
-# Create a non-privileged user that the app will run under.
-# See https://docs.docker.com/go/dockerfile-user-best-practices/
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+WORKDIR /app
 ARG UID=10001
 RUN adduser \
     --disabled-password \
@@ -31,9 +31,11 @@ RUN adduser \
 # Copy the Python dependencies from the builder stage
 COPY --from=builder /usr/local/lib/python3.13/site-packages/ /usr/local/lib/python3.13/site-packages/
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
-
+ENV PATH="/install/bin:$PATH"
 # Copy application code
-COPY --chown=appuser:appuser ./main.py .
+COPY ./main.py .
+
+RUN chown -R appuser:appuser /app
 
 # Switch to the non-privileged user to run the application.
 USER appuser

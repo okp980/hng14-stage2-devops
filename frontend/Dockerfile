@@ -13,7 +13,7 @@ FROM base as builder
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-FROM base as final
+FROM node:${NODE_VERSION}-alpine as final
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
@@ -26,17 +26,25 @@ RUN adduser \
     --no-create-home \
     --uid "${UID}" \
     appuser
-USER appuser
+
+
+WORKDIR /app
 
 COPY --from=builder /node_modules /node_modules
 COPY --from=builder /package.json /package.json
 COPY --from=builder /package-lock.json /package-lock.json
-
+    
 # Copy application code
-COPY --chown=appuser:appuser ./app.js .
+COPY ./app.js .
+
+# Set the ownership of the application code to the non-privileged user.
+RUN chown -R appuser:appuser /app   
 
 # Switch to the non-privileged user to run the application.
+USER appuser
 
 # Expose the port that the application listens on.
 EXPOSE 3000
+
+# Run the application.
 CMD ["node", "app.js"]
