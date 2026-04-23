@@ -68,6 +68,28 @@ jobs:
         with:
           name: coverage-report
           path: ./api/htmlcov
+
+  integration:
+    name: Integration test
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Create Compose env
+        run: |
+          cat > .env << 'EOF'
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+          API_URL=http://api:8000
+          PORT=3000
+          EOF
+      - name: Full stack — submit job via frontend, poll to completed, tear down
+        run: bash scripts/integration-e2e.sh
+      - name: Ensure Compose teardown
+        if: always()
+        run: docker compose -f compose.yaml down -v --remove-orphans || true
+
   build:
     needs: test
     runs-on: ubuntu-latest
